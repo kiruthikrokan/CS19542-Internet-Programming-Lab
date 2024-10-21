@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(135deg, #0b0b0b, #f0f0f1);
+            animation: gradientAnimation 8s ease infinite;
+            background-size: 400% 400%;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card {
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: none;
+            border-radius: 15px;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        .card-header {
+            background-color: #0e0f11;
+            color: white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .form-group {
+            margin: 20px 0;
+        }
+
+        .btn-primary, .btn-secondary {
+            border-radius: 20px;
+            transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: scale(1.05);
+            background-color: #7a82b7;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:active, .btn-secondary:active {
+            transform: scale(0.95);
+            background-color: #607863;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div id="markAttendance">
+            <div class="card-header">
+                <h2>Mark Attendance</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/attendance">
+                    <div class="form-group">
+                        <label for="rollNumber">Enter Roll Number:</label>
+                        <input type="text" class="form-control" id="rollNumber" name="roll_number" placeholder="Enter roll number here" required>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Mark as Absent</button>
+                        <button type="button" class="btn btn-secondary mt-2" onclick="showPage('viewAbsentees')">View Absent Students</button>
+                    </div>
+                </form>                
+            </div>
+        </div>
+
+        <div id="viewAbsentees" style="display:none;">
+            <div class="card-header">
+                <h2>Absent Students List</h2>
+            </div>
+            <div class="card-body">
+                <ul id="absentList" class="list-group"></ul>
+                <div class="text-center mt-3">
+                    <button class="btn btn-secondary" onclick="showPage('markAttendance')">Back to Attendance</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function showAbsentList() {
+            fetch('/view_absentees')
+                .then(response => response.json())
+                .then(absentees => {
+                    let list = document.getElementById("absentList");
+                    list.innerHTML = "";
+
+                    if (absentees.length > 0) {
+                        absentees.forEach(function(entry) {
+                            let rollNumber = entry['roll_number']; // Roll number from the database
+                            let absenceDate = entry['absence_date']; // Absence date from the database
+                            let li = document.createElement("li");
+                            li.classList.add("list-group-item");
+                            li.textContent = `Roll Number: ${rollNumber}, Absence Date: ${absenceDate}`;
+                            list.appendChild(li);
+                        });
+                    } else {
+                        list.innerHTML = "<li class='list-group-item'>No students marked as absent.</li>";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching absent list:', error);
+                });
+        }
+
+        function showPage(pageId) {
+            document.getElementById("markAttendance").style.display = "none";
+            document.getElementById("viewAbsentees").style.display = "none";
+            document.getElementById(pageId).style.display = "block";
+
+            if (pageId === "viewAbsentees") {
+                showAbsentList();
+            }
+        }
+
+        window.onload = function() {
+            showPage("markAttendance");
+        }
+    </script>
+</body>
+</html>

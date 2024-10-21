@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Management System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        function markAbsent() {
+            let rollNumber = document.getElementById("rollNumber").value;
+            if (rollNumber.trim() !== "") {
+                let absentRollNumbers = JSON.parse(localStorage.getItem("absentRollNumbers")) || [];
+                absentRollNumbers.push(rollNumber);
+                localStorage.setItem("absentRollNumbers", JSON.stringify(absentRollNumbers));
+                document.getElementById("rollNumber").value = "";
+              
+            }
+        }
+
+        function showAbsentList() {
+            let absentRollNumbers = JSON.parse(localStorage.getItem("absentRollNumbers")) || [];
+            let list = document.getElementById("absentList");
+            list.innerHTML = "";
+
+            if (absentRollNumbers.length > 0) {
+                absentRollNumbers.forEach(function(rollNumber) {
+                    let entry = document.createElement("li");
+                    entry.textContent = rollNumber;
+                    list.appendChild(entry);
+                });
+            } else {
+                list.innerHTML = "<li>No students marked as absent.</li>";
+            }
+        }
+
+        function showPage(pageId) {
+            document.getElementById("markAttendance").style.display = "none";
+            document.getElementById("viewAbsentees").style.display = "none";
+            document.getElementById(pageId).style.display = "block";
+
+            if (pageId === "viewAbsentees") {
+                showAbsentList();
+            }
+        }
+
+        window.onload = function() {
+            showPage("markAttendance");
+        }
+    </script>
+</head>
+<body>
+    <div class="home-bg">
+            <h1 class="text-center pt-5 pb-5 text-white">Attendance Management System</h1>
+            <div class="d-flex flex-row">
+                <div class="p-5 para-top">
+                    <h1 class="text-white">Breeze Through Attendance Woes!</h1>
+                    <p class="text-white pt-3 pb-3">Wave goodbye to attendance hassles with our system, making every day a breeze for your College!</p>
+                    <a href="/attendance"><button class="btn btn-primary">Get Started!!!!</button></a>
+                </div>
+                <div>
+                    <img src="https://media.gettyimages.com/id/1325747394/photo/finger-print-scan-male-employees-press-sensors-to-record-company-attendance-time-and-after.jpg?b=1&s=2048x2048&w=0&k=20&c=158tCZheBCYlglghuWrYiDvRWgq8doZyVIFJTwRNJP8=" class="image-size pl-5 pb-5"/>
+                </div>
+            </div>
+    </div>
+    
+</div>
+</body>
+</html>
